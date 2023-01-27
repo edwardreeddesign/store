@@ -10,6 +10,7 @@ const ProductScreen = () => {
   const { state, dispatch } = useContext(Store);
   const { query } = useRouter();
   const { slug } = query;
+  const router = useRouter();
   const product = data.products.find(x => x.slug === slug);
   if (!product) {
     <div>Product not found</div>;
@@ -26,6 +27,7 @@ const ProductScreen = () => {
       type: 'CART_ADD_ITEM',
       payload: { ...product, quantity: quantity },
     });
+    router.push('/cart');
   };
 
   return (
