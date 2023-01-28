@@ -53,7 +53,7 @@ const LoginScreen = () => {
             type="email"
             className="w-full"
             id="email"
-            autofocus
+            autoFocus
             {...register('email', {
               required: 'Please enter your email',
               pattern: {

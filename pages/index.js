@@ -1,8 +1,11 @@
+import { useSession } from 'next-auth/react';
 import Layout from '../components/Layout';
 import ProductItem from '../components/ProductItem';
 import data from '../utils/data';
 
 export default function Home() {
+  const { data: session } = useSession();
+  console.log(session);
   return (
     <Layout title="Home Page">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
