@@ -25,7 +25,7 @@ const ShippingScreen = () => {
     setValue('address', shippingAddress.address);
     setValue('city', shippingAddress.city);
     setValue('postalCode', shippingAddress.postalCode);
-    setValue('country', shippingAddress.fullName);
+    setValue('country', shippingAddress.country);
   }, [setValue, shippingAddress]);
 
   const submitHandler = ({ fullName, address, city, postalCode, country }) => {
