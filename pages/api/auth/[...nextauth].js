@@ -32,12 +32,11 @@ export default NextAuth({
           //returns object from database
           return {
             _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+
             name: user.name,
             email: user.email,
             image: 'f',
-            lodgeName: user.lodgeName,
+
             isAdmin: user.isAdmin,
           };
         }
