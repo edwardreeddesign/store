@@ -155,7 +155,9 @@ const AdminProductsScreen = () => {
                       <td className=" p-5 ">{product.rating}</td>
                       <td className=" p-5 ">
                         <Link href={`/admin/product/${product._id}`}>
-                          <button className="default-button">Edit</button>
+                          <button className="default-button" type="button">
+                            Edit
+                          </button>
                         </Link>
                         &nbsp;
                         <button
