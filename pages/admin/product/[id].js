@@ -15,6 +15,23 @@ function reducer(state, action) {
       return { ...state, loading: false, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'UPDATE_REQUEST':
+      return { ...state, loadingUpdate: true, errorUpdate: '' };
+    case 'UPDATE_SUCCESS':
+      return { ...state, loadingUpdate: false, errorUpdate: '' };
+    case 'UPDATE_FAIL':
+      return { ...state, loadingUpdate: false, errorUpdate: action.payload };
+
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: '',
+      };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
     default:
       return state;
   }
@@ -24,10 +41,11 @@ const AdminProductEditScreen = () => {
   const router = useRouter();
   const { query } = useRouter();
   const productId = query.id;
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
 
   const {
     register,
@@ -56,6 +74,30 @@ const AdminProductEditScreen = () => {
     };
     fetchData();
   }, [productId, setValue]);
+
+  const uploadHandler = async (e, imageField = 'image') => {
+    const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const {
+        data: { signature, timestamp },
+      } = await axios('/api/admin/cloudinary-sign');
+
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('signature', signature);
+      formData.append('timestamp', timestamp);
+      formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+      const { data } = await axios.post(url, formData);
+      dispatch({ type: 'UPLOAD_SUCCESS' });
+      setValue(imageField, data.secure_url);
+      toast.success('File uploaded successfully');
+    } catch (err) {
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
 
   const submitHandler = async ({
     name,
@@ -178,6 +220,17 @@ const AdminProductEditScreen = () => {
                 )}
               </div>
               <div className="mb-4">
+                <label htmlFor="imageFile">Upload image</label>
+                <input
+                  type="file"
+                  className="w-full"
+                  id="imageFile"
+                  onChange={uploadHandler}
+                />
+
+                {loadingUpload && <div>Uploading....</div>}
+              </div>
+              <div className="mb-4">
                 <label htmlFor="category">category</label>
                 <input
                   type="text"
@@ -206,7 +259,7 @@ const AdminProductEditScreen = () => {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="countInStock">countInStock</label>
+                <label htmlFor="countInStock">Count In Stock</label>
                 <input
                   type="text"
                   className="w-full"
@@ -222,7 +275,7 @@ const AdminProductEditScreen = () => {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="countInStock">description</label>
+                <label htmlFor="description">Description</label>
                 <input
                   type="text"
                   className="w-full"
