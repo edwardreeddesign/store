@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { signOut, useSession } from 'next-auth/react';
 import DropdownLink from './DropdownLink';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
+import { SearchIcon } from '@heroicons/react/outline';
 
 const Layout = ({ title, children }) => {
   const { status, data: session } = useSession();
@@ -22,6 +24,14 @@ const Layout = ({ title, children }) => {
     Cookies.remove('cart');
     dispatch({ type: 'CART_RESET' });
     signOut({ callbackUrl: '/login' });
+  };
+
+  const [query, setQuery] = useState('');
+
+  const router = useRouter();
+  const submitHandler = e => {
+    e.preventDefault();
+    router.push(`/search?query=${query}`);
   };
 
   return (
@@ -40,6 +50,24 @@ const Layout = ({ title, children }) => {
             <Link href="/" className="text-lg font-bold text-amber-500">
               MyStore
             </Link>
+            <form
+              onSubmit={submitHandler}
+              className="mx-auto  hidden w-full justify-center md:flex"
+            >
+              <input
+                onChange={e => setQuery(e.target.value)}
+                type="text"
+                className="rounded-tr-none rounded-br-none p-1 text-sm   focus:ring-0"
+                placeholder="Search products"
+              />
+              <button
+                className="rounded rounded-tl-none rounded-bl-none bg-amber-300 p-1 text-sm dark:text-black"
+                type="submit"
+                id="button-addon2"
+              >
+                <SearchIcon className="h-5 w-5"></SearchIcon>
+              </button>
+            </form>
             <div>
               <Link href="/cart " className="p-2">
                 Cart
